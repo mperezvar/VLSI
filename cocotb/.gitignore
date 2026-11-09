@@ -1,0 +1,21 @@
+# Entorno virtual de Python
+.venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Archivos generados por Cocotb
+sim_build/
+results.xml
+
+# Archivos de ondas
+*.vcd
+*.fst
+
+# Archivos de compilación RISC-V
+*.elf
+*.bin
+
+# Otros temporales
+*.log

@@ -1,0 +1,30 @@
+[*]
+[*] GTKWave Analyzer v3.3.126 (w)1999-2026 BSI
+[*] Mon Nov  9 00:39:41 2026
+[*]
+[dumpfile] "/home/memepe/VLSI/cocotb/cocotb_femto.vcd"
+[dumpfile_mtime] "Mon Nov  9 00:35:32 2026"
+[dumpfile_size] 154427
+[savefile] "/home/memepe/VLSI/cocotb/test_rv32i.gtkw"
+[timestart] 7387000
+[size] 1000 600
+[pos] -1 -1
+*-19.000000 7300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_cocotb.
+[treeopen] tb_cocotb.uut.
+[sst_width] 278
+[signals_width] 166
+[sst_expanded] 1
+[sst_vpaned_height] 157
+@23
+tb_cocotb.uut.CPU.PC[23:0]
+@28
+tb_cocotb.spi_clk
+tb_cocotb.spi_cs_n
+tb_cocotb.spi_mosi
+tb_cocotb.spi_miso
+@22
+tb_cocotb.uut.mem_address[31:0]
+tb_cocotb.uut.mem_rdata[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
