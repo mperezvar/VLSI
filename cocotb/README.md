@@ -4,11 +4,11 @@ Esta carpeta contiene una prueba independiente del proyecto **VLSI** para verifi
 
 El test utiliza **el RTL original del proyecto** y los modelos de memoria incluidos en `femtoRV/cores`:
 
-- `femtoRV/cores/sim_spi_flash/spiflash.v`: proporciona las instrucciones del programa.
+- `femtoRV/cores/sim_spi_flash/spiflash.v`: contiene instrucciones del programa.
 - `femtoRV/cores/sim_spi_ram/spiram.v`: modela la memoria de datos.
 - `femtoRV/OpenLane/src/MappedSPIFlash.v` y `MappedSPIRAM.v`: controladores SPI del SoC.
 
-**Importante:** este flujo no modifica `femtoRV/Makefile` ni sustituye `make sim` del profesor. Todo se ejecuta **dentro de `VLSI/cocotb/`**.
+**Importante:** este flujo no modifica `femtoRV/Makefile` ni sustituye `make sim` original. Todo se ejecuta **dentro de `VLSI/cocotb/`**.
 
 ## 1. Estructura de carpetas
 
@@ -37,16 +37,16 @@ Los archivos `program.elf`, `program.bin`, `program_shifted.bin`, `sim_build/`, 
 
 ## 2. Requisitos
 
-Probado por el equipo en **Linux**, con las siguientes versiones presentes en la ejecución exitosa:
+Probado por el equipo en **Ubuntu**, con las siguientes versiones presentes en la ejecución exitosa:
 
 | Herramienta | Para qué sirve | Versión de la ejecución exitosa |
 |---|---|---|
 | Python | Ejecutar Cocotb y las utilidades | 3.14.0 |
 | Cocotb | Controlar y verificar la simulación desde Python | 2.1.0 |
 | Icarus Verilog (`iverilog` / `vvp`) | Compilar y simular el RTL | 12.0 |
-| Clang + LLD | Compilar y enlazar `program.S` para RV32I | Sin versión fijada |
-| LLVM (`llvm-objcopy`) | Convertir ELF a binario | Sin versión fijada |
-| GNU Make | Ejecutar `make firmware` y `make sim` | Sin versión fijada |
+| Clang + LLD | Compilar y enlazar `program.S` para RV32I |  |
+| LLVM (`llvm-objcopy`) | Convertir ELF a binario |  |
+| GNU Make | Ejecutar `make firmware` y `make sim` |  |
 | GTKWave | Consultar las señales del archivo VCD | Opcional |
 
 No se necesitan OpenLane, Yosys ni una placa física para **esta prueba de simulación**.
@@ -58,7 +58,7 @@ sudo apt update
 sudo apt install -y make iverilog gtkwave clang lld llvm python3 python3-pip python3-venv
 ```
 
-Comprueba que todos los programas principales existen:
+Comprobar que todos los programas principales existen:
 
 ```bash
 python3 --version
@@ -70,7 +70,7 @@ llvm-objcopy --version
 make --version
 ```
 
-> En algunas distribuciones los ejecutables LLVM tienen un sufijo, como `llvm-objcopy-19`. Si `llvm-objcopy` no existe, busca el nombre disponible con `ls /usr/bin/llvm-objcopy*` y úsalo en el Makefile.
+> En algunas distribuciones los ejecutables LLVM tienen un sufijo, como `llvm-objcopy-19`. Si `llvm-objcopy` no existe, buscar el nombre disponible con `ls /usr/bin/llvm-objcopy*` y usarlo en el Makefile.
 
 ### 2.2. Crear y activar el entorno virtual
 
@@ -84,7 +84,7 @@ python -m pip install --upgrade pip
 python -m pip install 'cocotb==2.1.0'
 ```
 
-Verifica la instalación:
+Verificar la instalación:
 
 ```bash
 python --version
@@ -95,14 +95,14 @@ cocotb-config --makefiles
 
 El comando `cocotb-config --makefiles` debe mostrar la carpeta donde Cocotb guarda `Makefile.sim`.
 
-**Cada vez que abras una terminal nueva:**
+**Cada vez que se abra una terminal nueva:**
 
 ```bash
 cd ~/VLSI/cocotb
 source .venv/bin/activate
 ```
 
-Si no estás usando exactamente la ruta `~/VLSI/cocotb`, entra en la ubicación real de tu copia.
+Si no se está usando exactamente la ruta `~/VLSI/cocotb`, entra en la ubicación real de tu copia.
 
 ## 3. Verificar el Makefile de Cocotb
 
@@ -318,20 +318,6 @@ results.xml
 ```
 
 Se recomienda subir los **fuentes** (`Makefile`, `test_rv32i.py`, `tb_cocotb.v`, `program.S`, `bin_to_hex.py`, `README.md`) y, si se desea facilitar la reproducción sin compilar Assembly, las imágenes `.hex` pequeñas. Evita publicar las carpetas del entorno virtual y los archivos temporales de simulación.
-
-## 10. Lista de verificación rápida
-
-- [ ] Estoy dentro de `VLSI/cocotb/`, no de `VLSI/femtoRV/`.
-- [ ] Existe la carpeta hermana `../femtoRV/` con el RTL y los modelos SPI.
-- [ ] Están instalados `iverilog`, `vvp`, `clang`, `ld.lld`, `llvm-objcopy` y `make`.
-- [ ] Activé `.venv` e instalé Cocotb 2.1.0.
-- [ ] `COCOTB_TEST_MODULES = test_rv32i` coincide con el nombre del `.py`.
-- [ ] El Makefile usa `COCOTB_PLUSARGS += +firmware=$(IMAGE)`.
-- [ ] El Assembly incluye los cuatro `nop` iniciales.
-- [ ] `test_rv32i.py` espera `AUIPC = 0x000000C4` para este firmware.
-- [ ] `make firmware` genera `program.bin` y `firmware_flash.hex`.
-- [ ] `make sim` termina con `PASS: 27 comprobaciones RV32I`.
-- [ ] Puedo abrir `cocotb_femto.vcd` en GTKWave (opcional).
 
 ## Referencias
 
