@@ -1,139 +1,119 @@
-/* Programa de prueba RV32I */
+
+/* Pruebas RV32I + transmision UART */
 
 .section .text
 .globl _start
 
+/* Registrar el resultado y transmitirlo */
+.macro REPORTAR
+    sw x3, 8(x20)
+    jal x19, enviar_palabra
+.endm
+
 _start:
-    /* Instrucciones dummy para el arranque SPI */
+    /* NOP para compensar el arranque SPI */
     nop
     nop
     nop
     nop
 
-    /* Direcciones */
-    lui x20, 0x400       /* UART: 0x00400000 */
+    /* Direcciones base */
+    lui x20, 0x400       /* UART:    0x00400000 */
     lui x21, 0x10        /* SPI RAM: 0x00010000 */
 
-    /* Valores iniciales */
+    /* Operand​os */
     addi x1, x0, 10
     addi x2, x0, 3
 
-
-    /* ================================= */
-    /* OPERACIONES ARITMETICAS Y LOGICAS */
-    /* ================================= */
+    /* ===== ARITMETICA Y LOGICA ===== */
 
     add x3, x1, x2
-    sw  x3, 8(x20)       /* 13 */
+    REPORTAR
 
     sub x3, x1, x2
-    sw  x3, 8(x20)       /* 7 */
+    REPORTAR
 
     and x3, x1, x2
-    sw  x3, 8(x20)       /* 2 */
+    REPORTAR
 
     or x3, x1, x2
-    sw x3, 8(x20)        /* 11 */
+    REPORTAR
 
     xor x3, x1, x2
-    sw  x3, 8(x20)       /* 9 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* DESPLAZAMIENTOS                  */
-    /* ================================= */
+    /* ===== DESPLAZAMIENTOS ===== */
 
     sll x3, x2, x2
-    sw  x3, 8(x20)       /* 24 */
+    REPORTAR
 
     srl x3, x1, x2
-    sw  x3, 8(x20)       /* 1 */
+    REPORTAR
 
     addi x4, x0, -16
 
     sra x3, x4, x2
-    sw  x3, 8(x20)       /* -2 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* COMPARACIONES                    */
-    /* ================================= */
+    /* ===== COMPARACIONES ===== */
 
     slt x3, x2, x1
-    sw  x3, 8(x20)       /* 1 */
+    REPORTAR
 
     sltu x3, x2, x1
-    sw   x3, 8(x20)      /* 1 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* INSTRUCCIONES INMEDIATAS         */
-    /* ================================= */
+    /* ===== INMEDIATOS ===== */
 
     addi x3, x1, -2
-    sw   x3, 8(x20)      /* 8 */
+    REPORTAR
 
     andi x3, x1, 6
-    sw   x3, 8(x20)      /* 2 */
+    REPORTAR
 
     ori x3, x2, 8
-    sw  x3, 8(x20)       /* 11 */
+    REPORTAR
 
     xori x3, x1, 3
-    sw   x3, 8(x20)      /* 9 */
+    REPORTAR
 
     slli x3, x2, 4
-    sw   x3, 8(x20)      /* 48 */
+    REPORTAR
 
     srli x3, x1, 1
-    sw   x3, 8(x20)      /* 5 */
+    REPORTAR
 
     srai x3, x4, 2
-    sw   x3, 8(x20)      /* -4 */
+    REPORTAR
 
     slti x3, x2, 10
-    sw   x3, 8(x20)      /* 1 */
+    REPORTAR
 
     sltiu x3, x2, 10
-    sw    x3, 8(x20)     /* 1 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* LUI Y AUIPC                      */
-    /* ================================= */
+    /* ===== LUI Y AUIPC ===== */
 
     lui x3, 0x12345
-    sw  x3, 8(x20)
+    REPORTAR
 
     auipc x3, 0
-    sw    x3, 8(x20)
+    REPORTAR
 
+    /* ===== SPI RAM ===== */
 
-    /* ================================= */
-    /* PRUEBAS DE SPI RAM               */
-    /* ================================= */
-
-    /* Escribir y leer un valor */
-
+    /* Escritura y lectura de palabra */
     sw x1, 0(x21)
     lw x3, 0(x21)
+    REPORTAR
 
-    sw x3, 8(x20)        /* 10 */
-
-
-    /* Escribir y leer un byte */
-
+    /* Escritura y lectura de byte */
     addi x3, x0, 127
-
     sb x3, 4(x21)
     lbu x3, 4(x21)
+    REPORTAR
 
-    sw x3, 8(x20)        /* 127 */
-
-
-    /* ================================= */
-    /* SALTOS CONDICIONALES             */
-    /* ================================= */
+    /* ===== SALTOS CONDICIONALES ===== */
 
     addi x3, x0, 0
 
@@ -172,45 +152,92 @@ bltu_ok:
 
 bgeu_ok:
     addi x3, x3, 1
+    REPORTAR
 
-    sw x3, 8(x20)        /* 6 */
-
-
-    /* ================================= */
-    /* JAL                              */
-    /* ================================= */
+    /* ===== JAL ===== */
 
     jal x0, jal_ok
-
     addi x3, x0, 99
 
 jal_ok:
     addi x3, x3, 1
-    sw   x3, 8(x20)      /* 7 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* JALR                             */
-    /* ================================= */
+    /* ===== JALR ===== */
 
     lui x18, %hi(jalr_ok)
     addi x18, x18, %lo(jalr_ok)
 
     jalr x0, 0(x18)
-
     addi x3, x0, 99
 
 jalr_ok:
     addi x3, x3, 1
-    sw   x3, 8(x20)      /* 8 */
+    REPORTAR
 
-
-    /* ================================= */
-    /* FINALIZACION                     */
-    /* ================================= */
+    /* ===== FINALIZACION ===== */
 
     addi x3, x0, 0x55
-    sw   x3, 8(x20)
+    REPORTAR
 
 fin:
     jal x0, fin
+
+
+/* =========================================
+   RUTINA DE TRANSMISION UART
+
+   Entrada:
+       x3 = palabra de 32 bits
+
+   Salida:
+       4 bytes por UART, little-endian
+
+   Registros utilizados:
+       x19 = direccion de retorno
+       x22 = copia del resultado
+       x23 = contador de bytes
+       x24 = control UART
+       x25 = estado UART
+
+   x3 permanece sin modificar.
+   ========================================= */
+
+enviar_palabra:
+
+    addi x22, x3, 0
+    addi x23, x0, 4
+
+siguiente_byte:
+
+    /* Cargar el dato a transmitir */
+    sw x22, 8(x20)
+
+    /* Activar tx_wr (bit 3 del control) */
+    addi x24, x0, 8
+    sw x24, 16(x20)
+
+esperar_inicio:
+
+    /* Esperar tx_busy = 1 (bit 9) */
+    lw x25, 16(x20)
+    andi x25, x25, 512
+    beq x25, x0, esperar_inicio
+
+    /* Desactivar tx_wr para evitar reenvios */
+    sw x0, 16(x20)
+
+esperar_fin:
+
+    /* Esperar tx_busy = 0 */
+    lw x25, 16(x20)
+    andi x25, x25, 512
+    bne x25, x0, esperar_fin
+
+    /* Preparar el siguiente byte */
+    srli x22, x22, 8
+    addi x23, x23, -1
+    bne x23, x0, siguiente_byte
+
+    /* Volver al programa */
+    jalr x0, 0(x19)
